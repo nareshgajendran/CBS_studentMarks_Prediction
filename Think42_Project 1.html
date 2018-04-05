@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title></title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+
+
+
+
+</head>
+
+<body>
+<p>library(ggplot2)
+library(MASS)
+library(psych)
+library(dplyr)
+library(stringr)</p>
+
+<p>setwd(&ldquo;/Users/nareshgajendran/Desktop/BACP/Task 1&rdquo;)
+getwd()</p>
+
+<p>mydata &lt;- read.csv(&ldquo;student-performance.csv&rdquo;)</p>
+
+<p>#Descriptive stats#</p>
+
+<p>View(mydata)
+summary(mydata)
+str(mydata)
+head(mydata)</p>
+
+<p>#Data cleaning#
+mydata$mm &lt;- as.factor(gsub(&#39;,&#39;,&#39;&#39;,mydata$mm))
+mydata$Semester &lt;- as.factor(replace(mydata$Semester,mydata$Semester== &ldquo;F&rdquo;,&ldquo;First&rdquo;))
+mydata$Parent.responsible.for.student &lt;- as.factor(str_replace_all(mydata$Parent.responsible.for.student,&ldquo;mom&rdquo;,&ldquo;Mother&rdquo;))</p>
+
+<p>levels(mydata$Topic)</p>
+
+<p>library(corrplot)
+library(RColorBrewer)</p>
+
+<p>#Define Dummies#
+mydata$Female &lt;- ifelse(mydata$mm == &ldquo;Female&rdquo;,1,0)
+mydata$male &lt;-   ifelse(mydata$mm == &ldquo;Male&rdquo;,1,0)</p>
+
+<p>mydata$SecA &lt;- ifelse(mydata$Section.ID == &ldquo;A&rdquo;,1,0)
+mydata$SecB &lt;- ifelse(mydata$Section.ID == &ldquo;B&rdquo;,1,0)
+mydata$SecC &lt;- ifelse(mydata$Section.ID == &ldquo;C&rdquo;,1,0)</p>
+
+<p>mydata$Sem1 &lt;- ifelse(mydata$Semester == &ldquo;First&rdquo;,1,0)
+mydata$Sem2 &lt;- ifelse(mydata$Semester == &ldquo;Second&rdquo;,1,0)</p>
+
+<p>mydata$StudentWithFather &lt;- ifelse(mydata$Parent.responsible.for.student == &ldquo;Father&rdquo;,1,0)
+mydata$StudentWithMother &lt;- ifelse(mydata$Parent.responsible.for.student == &ldquo;Mother&rdquo;,1,0)</p>
+
+<p>mydata$ParentAnsSurvey &lt;- ifelse(mydata$Parent.Answering.Survey == &ldquo;Yes&rdquo;,1,0)
+mydata$ParentNotAnsSurvey &lt;- ifelse(mydata$Parent.Answering.Survey == &ldquo;No&rdquo;,1,0)</p>
+
+<p>mydata$ParSchoolSatisfactionGood &lt;- ifelse(mydata$ParentschoolSatisfaction == &ldquo;Good&rdquo;,1,0)
+mydata$ParSchoolSatisfactionBad &lt;- ifelse(mydata$ParentschoolSatisfaction == &ldquo;Bad&rdquo;,1,0)</p>
+
+<p>mydata$StudAbsDayUnder7 &lt;- ifelse(mydata$StudentAbsenceDays == &ldquo;Under-7&rdquo;,1,0)
+mydata$StudAbsDayAbove7 &lt;- ifelse(mydata$StudentAbsenceDays == &ldquo;Above-7&rdquo;,1,0)</p>
+
+<p>mydata$level &lt;- with(mydata, ifelse(Total.Marks&lt; 69, &ldquo;Low-Level&rdquo;,
+                             ifelse(Total.Marks &lt;89, &ldquo;Middle-Level&rdquo;
+                                    ,&ldquo;High-Level&rdquo;)))</p>
+
+<p>View(mydata)</p>
+
+<p>#normalisation of other values in the data#</p>
+
+<p>normalize &lt;-function(x){
+  +return((x-min(x))/(max(x)-min(x)))}
+mydata$norm.RaisedHand&lt;-normalize(mydata$Raised.hand)</p>
+
+<p>normalize &lt;-function(x){
+  +return((x-min(x))/(max(x)-min(x)))}
+mydata$norm.VisitedResouces&lt;-normalize(mydata$Visited.resources)</p>
+
+<p>normalize &lt;-function(x){
+  +return((x-min(x))/(max(x)-min(x)))}
+mydata$norm.ViewingAnnouncements&lt;-normalize(mydata$Viewing.announcements)</p>
+
+<p>normalize &lt;-function(x){
+  +return((x-min(x))/(max(x)-min(x)))}
+mydata$norm.DiscussionGroups&lt;-normalize(mydata$Discussion.groups)</p>
+
+<p>normalize &lt;-function(x){
+  +return((x-min(x))/(max(x)-min(x)))}
+mydata$norm.totalMarks&lt;-normalize(mydata$Total.Marks)</p>
+
+<p>library(e1071)
+library(MASS)</p>
+
+<p>qqnorm(mydata$Total.Marks)
+hist(mydata$Total.Marks, main = &ldquo;Total Marks&rdquo;)
+skewness(mydata$Total.Marks)
+boxcox(mydata$Total.Marks)</p>
+
+<p>#Data Visualisation#</p>
+
+<p>par(mfrow = c(2,2))</p>
+
+<p>boxplot(mydata$Total.Marks, horizontal = TRUE, col = &ldquo;lightblue&rdquo;, main = &ldquo;Total Marks&rdquo;)
+boxplot(mydata$Total.Marks ~ mydata$mm, main = &ldquo;Marks - Male vs Female&rdquo;, col = &ldquo;orange&rdquo;)
+boxplot(mydata$Total.Marks ~ mydata$Section.ID, col = &ldquo;grey&rdquo;, main = &ldquo;Marks - Sectionwise split&rdquo;)
+hist(mydata$Total.Marks, main = &ldquo;No of students by marks&rdquo;, ylab = &ldquo;no of Students&rdquo;, xlab = &ldquo;Marks&rdquo;, col = &ldquo;green&rdquo;)</p>
+
+<p>#This is not a normally distrubuted data#</p>
+
+<p>#this is to find the important variables in data#
+attach(mydata)
+str(mydata)
+#lpm &lt;- (mydatanorm.totalMarks ~ mm + Section.ID + Topic + Semester + Parent.responsible.for.student
+       # + Raised.hand + Visited.resources + Viewing.announcements + Discussion.groups + Parent.Answering.Survey
+      #  ParentschoolSatisfaction + StudentAbsenceDays + )</p>
+
+<p>lpm0 &lt;- (mydata$norm.totalMarks ~ Female + male + SecA + SecB + SecC + Sem1 + Sem2 + StudentWithFather
+         + StudentWithMother + ParentAnsSurvey + ParentNotAnsSurvey + ParSchoolSatisfactionGood + ParSchoolSatisfactionBad
+         + StudAbsDayUnder7 + StudAbsDayAbove7 + norm.RaisedHand + norm.VisitedResouces + norm.DiscussionGroups)
+LPM.1&lt;-lm(lpm0,mydata)</p>
+
+<p>lpm1 &lt;- (mydata$norm.totalMarks ~ Female + StudentWithFather + ParentAnsSurvey
+         + StudAbsDayUnder7 + norm.RaisedHand + norm.VisitedResouces)
+LPM.2&lt;-lm(lpm1,mydata)</p>
+
+<p>plot(LPM.1)
+plot(LPM.2)</p>
+
+<p>library(car)
+vif(LPM.2)</p>
+
+<p>#The variables in the models are less than 5 hence they all are significant so this is derived from value influencing factors in the data#
+#Plots on fitting lines#</p>
+
+<p>#Coorelation between Residuals and explanatory variables#
+cor.test(Total.Marks, LPM.2$residuals)</p>
+
+<p>#Homocedasticity#</p>
+
+<p>ncvTest(LPM.2)
+spreadLevelPlot(LPM.2)</p>
+
+<p>#Split the data#</p>
+
+<p>set.seed(1234)
+pd&lt;-sample(2,nrow(mydata),replace=TRUE, prob=c(0.7,0.3))</p>
+
+<p>train&lt;-mydata[pd==1,]
+val&lt;-mydata[pd==2,]</p>
+
+<p>val$prediction &lt;- predict(LPM.2, newdata = val)
+summary(prediction)</p>
+
+<p>boxplot(val$prediction ~ val$mm)
+boxplot(norm.totalMarks ~ mm)</p>
+
+<p>summary(finalScore)</p>
+
+<p>#Multiple Linear#
+View(val)
+library(nlme)
+attach(val)
+library(forecast)
+library(MLmetrics)</p>
+
+<p>MAPE(val$prediction, val$norm.totalMarks)</p>
+
+<p>MAPE(y_pred, y_true)</p>
+
+</body>
+
+</html>
+
